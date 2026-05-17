@@ -268,7 +268,7 @@ function DesignSystemCard({
         {thumbHtml ? (
           <iframe
             title={`${system.title} preview`}
-            sandbox="allow-scripts"
+            sandbox="allow-scripts allow-downloads"
             srcDoc={buildSrcdoc(thumbHtml)}
             tabIndex={-1}
             aria-hidden

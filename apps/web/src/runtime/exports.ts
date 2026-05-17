@@ -475,7 +475,7 @@ export function buildSandboxedPreviewDocument(
   opts?: { allowModals?: boolean },
 ): string {
   const safeTitle = escapeHtmlAttribute(title || 'Preview');
-  const sandbox = opts?.allowModals ? 'allow-scripts allow-modals' : 'allow-scripts';
+  const sandbox = opts?.allowModals ? 'allow-scripts allow-downloads allow-modals' : 'allow-scripts allow-downloads';
   return `<!doctype html>
 <html lang="en">
 <head>

@@ -447,7 +447,7 @@ export function PreviewModal({
                 <iframe
                   key={activeView?.id ?? 'view'}
                   title={`${title} ${activeView?.label ?? ''}`}
-                  sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
+                  sandbox="allow-scripts allow-downloads allow-popups allow-popups-to-escape-sandbox"
                   srcDoc={srcDoc}
                 />
               </div>

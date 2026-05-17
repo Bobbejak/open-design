@@ -304,7 +304,7 @@ function escapeAttr(value: string): string {
     .replace(/>/g, '&gt;');
 }
 
-// Sandboxed iframes (we use `sandbox="allow-scripts"`) without
+// Sandboxed iframes (we use `sandbox="allow-scripts allow-downloads"`) without
 // `allow-same-origin` raise a SecurityError on first `localStorage` /
 // `sessionStorage` access. Many freeform-generated decks call
 // `localStorage.getItem(...)` at the top of their IIFE without a

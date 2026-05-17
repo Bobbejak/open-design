@@ -1018,7 +1018,7 @@ export function LiveArtifactViewer({
                     ref={iframeRef}
                     data-testid="live-artifact-preview-frame"
                     title={liveArtifact.title}
-                    sandbox="allow-scripts allow-popups"
+                    sandbox="allow-scripts allow-downloads allow-popups"
                     src={previewUrl}
                   />
                 </PreviewDrawOverlay>
@@ -3273,7 +3273,7 @@ function ReactComponentViewer({
           <iframe
             data-testid="react-component-preview-frame"
             title={file.name}
-            sandbox="allow-scripts"
+            sandbox="allow-scripts allow-downloads"
             srcDoc={srcDoc}
           />
         ) : (
@@ -5326,7 +5326,7 @@ function HtmlViewer({
                     data-testid="artifact-preview-frame"
                     data-od-render-mode="url-load"
                     title={file.name}
-                    sandbox="allow-scripts"
+                    sandbox="allow-scripts allow-downloads"
                     src={previewSrcUrl}
                     onLoad={syncBridgeModes}
                   />
@@ -5336,7 +5336,7 @@ function HtmlViewer({
                     data-testid="artifact-preview-frame"
                     data-od-render-mode="srcdoc"
                     title={file.name}
-                    sandbox="allow-scripts"
+                    sandbox="allow-scripts allow-downloads"
                     srcDoc={srcDoc}
                     // Re-seeds the iframe-side bridge with the host's
                     // authoritative inspect override map after each srcdoc
@@ -5562,14 +5562,14 @@ function HtmlViewer({
           {useUrlLoadPreview ? (
             <iframe
               title="present"
-              sandbox="allow-scripts"
+              sandbox="allow-scripts allow-downloads"
               data-od-render-mode="url-load"
               src={previewSrcUrl}
             />
           ) : (
             <iframe
               title="present"
-              sandbox="allow-scripts"
+              sandbox="allow-scripts allow-downloads"
               data-od-render-mode="srcdoc"
               srcDoc={srcDoc}
             />
