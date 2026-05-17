@@ -3809,6 +3809,59 @@ function HtmlViewer({
     return () => window.removeEventListener('message', onMessage);
   }, [effectiveDeck, previewStateKey]);
 
+  // Generic iframe-side state storage bridge. Iframes served from
+  // sandboxed (opaque) origins can't reliably use localStorage — writes
+  // succeed in-session but the next reload presents as a new origin
+  // and reads nothing back. Park the state in the parent shell's
+  // localStorage (stable origin) and surface it back to the iframe via
+  // postMessage. Keys are scoped per (project × file) so two artifacts
+  // can independently use the same userland key (e.g. 'theme').
+  //
+  // Protocol (iframe → parent):
+  //   { type: 'od:state-save', key: string, value: any }
+  //   { type: 'od:state-load', key: string, requestId: string }
+  // Protocol (parent → iframe, in response to load):
+  //   { type: 'od:state-load-result', requestId: string, value: any | null }
+  useEffect(() => {
+    function scopedKey(userKey: string): string {
+      return `od:iframe-state:${projectId}:${file.name}:${userKey}`;
+    }
+    function onMessage(ev: MessageEvent) {
+      if (ev.source !== iframeRef.current?.contentWindow) return;
+      const data = ev?.data as
+        | { type?: string; key?: unknown; value?: unknown; requestId?: unknown }
+        | null;
+      if (!data || typeof data.type !== 'string') return;
+      if (typeof data.key !== 'string' || !data.key) return;
+
+      if (data.type === 'od:state-save') {
+        try {
+          window.localStorage.setItem(scopedKey(data.key), JSON.stringify(data.value ?? null));
+        } catch {
+          // Quota exceeded or storage disabled — drop silently.
+        }
+        return;
+      }
+
+      if (data.type === 'od:state-load') {
+        if (typeof data.requestId !== 'string') return;
+        let value: unknown = null;
+        try {
+          const raw = window.localStorage.getItem(scopedKey(data.key));
+          value = raw === null ? null : JSON.parse(raw);
+        } catch {
+          // Corrupt JSON or storage disabled — fall through with null.
+        }
+        iframeRef.current?.contentWindow?.postMessage(
+          { type: 'od:state-load-result', requestId: data.requestId, value },
+          '*',
+        );
+      }
+    }
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, [projectId, file.name]);
+
   useEffect(() => {
     const win = iframeRef.current?.contentWindow;
     if (!win) return;
